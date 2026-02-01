@@ -4,7 +4,11 @@ import com.aniljangir.payments.domain.PaymentStatus;
 import com.aniljangir.payments.domain.PaymentTransaction;
 import com.aniljangir.payments.service.IdempotencyService;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
+@Component
 public class PaymentItemProcessor implements ItemProcessor<PaymentTransaction, PaymentTransaction> {
 
     private final IdempotencyService idempotencyService;
@@ -21,16 +25,32 @@ public class PaymentItemProcessor implements ItemProcessor<PaymentTransaction, P
 
         if (duplicate) {
             item.setStatus(PaymentStatus.DUPLICATE);
+            item.setFailureReason("DUPLICATE_TRANSACTION");
             return item;
         }
 
-        // simulate validation
-        if (item.getAmount().signum() <= 0) {
+        if (item.getAmount() == null || item.getAmount().signum() <= 0) {
             item.setStatus(PaymentStatus.FAILED);
-            throw new IllegalArgumentException("Invalid amount");
+            item.setFailureReason("INVALID_AMOUNT");
+            return item;
+        }
+
+        if (item.getCurrency() == null || item.getCurrency().isBlank()) {
+            item.setStatus(PaymentStatus.FAILED);
+            item.setFailureReason("INVALID_CURRENCY");
+            return item;
+        }
+
+        if (item.getCreatedAt() == null) {
+            item.setCreatedAt(LocalDateTime.now());
         }
 
         item.setStatus(PaymentStatus.SUCCESS);
+        item.setFailureReason(null);
         return item;
     }
+
+
+
+
 }

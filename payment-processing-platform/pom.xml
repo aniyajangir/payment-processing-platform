@@ -33,6 +33,13 @@
     <!-- ===== Dependencies ===== -->
     <dependencies>
 
+        <!-- In-memory Database for Testing -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Core Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

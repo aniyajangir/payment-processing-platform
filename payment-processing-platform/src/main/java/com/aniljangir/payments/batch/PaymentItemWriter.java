@@ -3,10 +3,12 @@ package com.aniljangir.payments.batch;
 import com.aniljangir.payments.domain.PaymentTransaction;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PaymentItemWriter implements ItemWriter<PaymentTransaction> {
 
     private final List<PaymentTransaction> successStore = new ArrayList<>();
